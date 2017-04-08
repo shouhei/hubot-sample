@@ -1,3 +1,4 @@
 module.exports = (robot) ->
-  robot.respond /lottery(?: (\S+))?/, (msg) ->
-    msg.send msg.random msg.match
+  robot.respond /lottery (.*)/i, (msg) ->
+    result = msg.random msg.match[1].split(/\b/)
+    msg.send result
