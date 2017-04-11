@@ -31,7 +31,7 @@ module.exports = (robot) ->
             time = new Date time_str
             now = new Date
             if time.getDate() == now.getDate()
-              msg.send ":white_check_mark: " + json[0].actor.login + " : " + time
+              msg.send ":white_check_mark: " + event.payload.commits[0].author.name + " : " + time
             else
-              msg.send ":warning: " + json[0].actor.login + " : " + time
+              msg.send ":warning: " + event.payload.commits[0].author.name + " : " + time
             break
