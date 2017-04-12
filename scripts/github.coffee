@@ -41,5 +41,4 @@ module.exports = (robot) ->
                 msg.send ":white_check_mark: " + event.payload.commits[0].author.name + " : " + time
               else
                 msg.send ":warning: " + event.payload.commits[0].author.name + " : " + time
-            else
               return true
