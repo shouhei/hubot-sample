@@ -5,15 +5,18 @@ module.exports = (robot) ->
 
     request (err, res, body) ->
       json = JSON.parse body
-      time_str = json[0].created_at.replace(/T/," ")
-      time_str = time_str.replace(/Z/," UTC")
-      time = new Date time_str
-      now = new Date
-
-      if time.getDate() == now.getDate()
-        msg.send ":white_check_mark: " + target + " : " + time
+      if json.message == "Not Found"
+        msg.send target + " is " + json.message
       else
-        msg.send ":warning: " + target + " : " + time
+        time_str = json[0].created_at.replace(/T/," ")
+        time_str = time_str.replace(/Z/," UTC")
+        time = new Date time_str
+        now = new Date
+
+        if time.getDate() == now.getDate()
+          msg.send ":white_check_mark: " + target + " : " + time
+        else
+          msg.send ":warning: " + target + " : " + time
   
   robot.hear /pushedList (.*)/i, (msg) ->
     targets = msg.match[1].replace(/\.$/,"")
@@ -24,14 +27,19 @@ module.exports = (robot) ->
 
       request (err, res, body) ->
         json = JSON.parse body
-        for event in json
-          if event.type == "PushEvent"
-            time_str = json[0].created_at.replace(/T/," ")
-            time_str = time_str.replace(/Z/," UTC")
-            time = new Date time_str
-            now = new Date
-            if time.getDate() == now.getDate()
-              msg.send ":white_check_mark: " + event.payload.commits[0].author.name + " : " + time
+        if json.message == "Not Found"
+          msg.send target + " is " + json.message
+          return true
+        else
+          for event in json
+            if event.type == "PushEvent"
+              time_str = json[0].created_at.replace(/T/," ")
+              time_str = time_str.replace(/Z/," UTC")
+              time = new Date time_str
+              now = new Date
+              if time.getDate() == now.getDate()
+                msg.send ":white_check_mark: " + event.payload.commits[0].author.name + " : " + time
+              else
+                msg.send ":warning: " + event.payload.commits[0].author.name + " : " + time
             else
-              msg.send ":warning: " + event.payload.commits[0].author.name + " : " + time
-            break
+              return true
