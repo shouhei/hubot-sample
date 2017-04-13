@@ -1,35 +1,26 @@
 module.exports = (robot) ->
-  robot.respond /pushed (.*)/i, (msg) ->
-    target = msg.match[1]
-    request = msg.http("https://api.github.com/users/#{target}/events").get()
-
-    request (err, res, body) ->
-      json = JSON.parse body
-      if json.message == "Not Found"
-        msg.send target + " is " + json.message
-      else
-        time_str = json[0].created_at.replace(/T/," ")
-        time_str = time_str.replace(/Z/," UTC")
-        time = new Date time_str
-        now = new Date
-
-        if time.getDate() == now.getDate()
-          msg.send ":white_check_mark: " + target + " : " + time
-        else
-          msg.send ":warning: " + target + " : " + time
-  
-  robot.hear /pushedList (.*)/i, (msg) ->
+  robot.hear /pushed (.*)/i, (msg) ->
     targets = msg.match[1].replace(/\.$/,"")
     targets = targets.split(/\s/)
     for target in targets
       url = "https://api.github.com/users/#{target}/events"
-      request = msg.http(url).get()
-
-      request (err, res, body) ->
+      msg.http(url).get() (err, res, body) ->
         json = JSON.parse body
         if json.message == "Not Found"
-          msg.send target + " is " + json.message
-          return true
+          url = "https://api.bitbucket.org/2.0/repositories/#{target}/"
+          msg.http(url).get() (bit_err, bit_res, bit_body) ->
+            bit_json = JSON.parse bit_body
+            if bit_json.type == "error"
+              msg.send bit_json.error.message
+            else
+              time_str = bit_json.values[0].updated_on.replace(/T/," ")
+              time_str = time_str.replace(/Z/," UTC")
+              time = new Date time_str
+              now = new Date
+              if time.getDate() == now.getDate()
+                msg.send ":white_check_mark: " + bit_json.values[0].owner.display_name + " : " + time
+              else
+                msg.send ":warning: " + bit_json.values[0].owner.display_name + " : " + time
         else
           for event in json
             if event.type == "PushEvent"
@@ -41,4 +32,4 @@ module.exports = (robot) ->
                 msg.send ":white_check_mark: " + event.payload.commits[0].author.name + " : " + time
               else
                 msg.send ":warning: " + event.payload.commits[0].author.name + " : " + time
-              return true
+              return false
