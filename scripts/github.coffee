@@ -18,9 +18,9 @@ module.exports = (robot) ->
               time = new Date time_str
               now = new Date
               if time.getDate() == now.getDate()
-                msg.send ":white_check_mark: " + bit_json.values[0].owner.display_name + " : " + time
+                msg.send ":white_check_mark: <" + bit_json.values[0].owner.links.html.href + "|"  + bit_json.values[0].owner.display_name + "> : " + time
               else
-                msg.send ":warning: " + bit_json.values[0].owner.display_name + " : " + time
+                msg.send ":warning: <" + bit_json.values[0].owner.links.html.href + "|"  + bit_json.values[0].owner.display_name + "> : " + time
         else
           for event in json
             if event.type == "PushEvent"
@@ -29,7 +29,7 @@ module.exports = (robot) ->
               time = new Date time_str
               now = new Date
               if time.getDate() == now.getDate()
-                msg.send ":white_check_mark: " + event.payload.commits[0].author.name + " : " + time
+                msg.send ":white_check_mark: <" + event.actor.url.replace(/api\.|users(?=\/)/g,"") + "|" + event.payload.commits[0].author.name + "> : " + time
               else
-                msg.send ":warning: " + event.payload.commits[0].author.name + " : " + time
+                msg.send ":warning: <" + event.actor.url.replace(/api\.|users(?=\/)/g,"") + "|" + event.payload.commits[0].author.name + "> : " + time                
               return false
