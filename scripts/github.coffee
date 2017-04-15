@@ -1,5 +1,5 @@
 module.exports = (robot) ->
-  robot.hear /pushed (.*)/i, (msg) ->
+  robot.hear ///#{robot.name}\s+pushed\s+(.*)///i, (msg) ->
     targets = msg.match[1].replace(/\.$/,"")
     targets = targets.split(/\s/)
     for target in targets
