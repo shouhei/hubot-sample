@@ -1,3 +1,9 @@
+# Description:
+#   Check today's push.
+#
+# Commands:
+#   hubot pushed <query> - Check today's push
+
 module.exports = (robot) ->
   robot.hear ///#{robot.name}\s+pushed\s+(.*)///i, (msg) ->
     targets = msg.match[1].replace(/\.$/,"")
