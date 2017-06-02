@@ -14,7 +14,7 @@ root = "/app/mackerel-agent"
 apikey = "${MACKEREL_API_KEY}"
 roles = [ "fni-bot:web" ]
 [plugin.metrics.process]
-command="/process.sh"
+command="/app/process.sh"
 type="metric"
 EOF
 SCRIPT
