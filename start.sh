@@ -11,8 +11,8 @@ sh << SCRIPT
 cat > $mackerel_agent_conf <<'EOF';
 pidfile = "/app/mackerel-agent/mackerel-agent.pid"
 root = "/app/mackerel-agent"
-apikey = "<API-KEY>"
-roles = [ "<SERVICE>:<ROLE>" ]
+apikey = "${MACKEREL_API_KEY}"
+roles = [ "fni-bot:web" ]
 EOF
 SCRIPT
 trap "$mackerel_agent retire -conf $mackerel_agent_conf -force" TERM
