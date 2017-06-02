@@ -1,1 +1,1 @@
-web: bin/hubot -a slack -n fni-bot
+web: ./start.sh
