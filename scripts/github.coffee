@@ -4,8 +4,16 @@
 # Commands:
 #   hubot pushed <query> - Check today's push
 
+guid = ->
+  s4 = ->
+    Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
+  s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4()
+
 module.exports = (robot) ->
   robot.hear ///#{robot.name}\s+pushed\s+(.*)///i, (msg) ->
+    request_guid = guid()
+    robot.logger.info "#{request_guid}: Request has comming."
+    robot.logger.info "#{request_guid}: Params #{msg.match[1]}"
     targets = msg.match[1].replace(/\.$/,"")
     targets = targets.split(/\s/)
     for target in targets
@@ -25,8 +33,10 @@ module.exports = (robot) ->
               now = new Date
               if time.getDate() == now.getDate()
                 msg.send ":white_check_mark: <" + bit_json.values[0].owner.links.html.href + "|"  + bit_json.values[0].owner.display_name + "> : " + time
+                robot.logger.info "#{request_guid}: Bitbucket commited response has send."
               else
                 msg.send ":warning: <" + bit_json.values[0].owner.links.html.href + "|"  + bit_json.values[0].owner.display_name + "> : " + time
+                robot.logger.info "#{request_guid}: Bitbucket not commited response has send."
         else
           for event in json
             if event.type == "PushEvent"
@@ -36,6 +46,8 @@ module.exports = (robot) ->
               now = new Date
               if time.getDate() == now.getDate()
                 msg.send ":white_check_mark: <" + event.actor.url.replace(/api\.|users(?=\/)/g,"") + "|" + event.payload.commits[0].author.name + "> : " + time
+                robot.logger.info "#{request_guid}: Github commited response has send."
               else
-                msg.send ":warning: <" + event.actor.url.replace(/api\.|users(?=\/)/g,"") + "|" + event.payload.commits[0].author.name + "> : " + time                
+                msg.send ":warning: <" + event.actor.url.replace(/api\.|users(?=\/)/g,"") + "|" + event.payload.commits[0].author.name + "> : " + time
+                robot.logger.info "#{request_guid}: Gtihub not commited response has send."
               return false
