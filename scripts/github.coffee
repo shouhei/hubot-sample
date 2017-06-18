@@ -19,6 +19,10 @@ module.exports = (robot) ->
     for target in targets
       url = "https://api.github.com/users/#{target}/events"
       msg.http(url).get() (err, res, body) ->
+        if err
+          return msg.send ":white_check_mark: < Request was failed. Please check GitHub status. > : " + time
+
+        robot.logger.info "#{request_guid}: GitHub Response #{body}"
         json = JSON.parse body
         for event in json
           if event.type == "PushEvent"
